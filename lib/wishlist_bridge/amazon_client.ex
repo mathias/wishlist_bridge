@@ -25,12 +25,16 @@ defmodule WishlistBridge.AmazonClient do
 
   def lookup_isbn(isbn) do
     isbn
+    |> url_for_isbn
+    |> HTTPoison.get!
+  end
+
+  def url_for_isbn(isbn) do
+    isbn
     |> params_for_isbn
     |> combine_params
     |> url_for
     |> signed_url_for
-    |> IO.puts
-    #|> HTTPoison.get!
   end
 
   defp signed_url_for(url) do
