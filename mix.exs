@@ -32,6 +32,7 @@ defmodule GoodreadsAmazonWishlistBridge.Mixfile do
       {:dialyxir, "~> 0.4", only: [:dev]},
       {:dogma, "~> 0.1.13", only: [:dev]},
       {:httpoison, "~> 0.10.0"},
+      {:sweet_xml, "~> 0.6.2"},
       {:timex, "~> 3.1"}
     ]
   end
