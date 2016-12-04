@@ -37,6 +37,50 @@ defmodule WishlistBridge.AmazonClient do
     |> signed_url_for
   end
 
+  def lookup_title(title) do
+    title
+    |> url_for_title
+    |> HTTPoison.get!
+  end
+
+  def url_for_title(title) do
+    title
+    |> params_for_title
+    |> combine_params
+    |> url_for
+    |> signed_url_for
+  end
+
+  ### Private
+
+  defp common_params do
+    %{
+      "Service" => @service,
+      "Operation" => "ItemLookup",
+      "SearchIndex" => "All",
+      "AWSAccessKeyId" => access_key,
+      "AssociateTag" => associate_tag,
+      "Timestamp" => formatted_current_time
+    }
+  end
+
+  defp params_for_isbn(isbn) do
+    Map.merge(common_params,
+      %{
+        "ResponseGroup" => "Large",
+        "IdType" => "ISBN",
+        "ItemId" => isbn
+      })
+  end
+
+  defp params_for_title(title) do
+    Map.merge(common_params,
+      %{
+        "ResponseGroup" => "Small",
+        "Title" => title,
+      })
+  end
+
   defp signed_url_for(url) do
     url_parts = URI.parse(url)
 
@@ -50,20 +94,6 @@ defmodule WishlistBridge.AmazonClient do
 
   defp url_for(query) do
     "#{@scheme}://#{@host}#{@path}?#{query}"
-  end
-
-  defp params_for_isbn(isbn) do
-    %{
-      "Service" => @service,
-      "Operation" => "ItemLookup",
-      "ResponseGroup" => "Large",
-      "SearchIndex" => "All",
-      "IdType" => "ISBN",
-      "ItemId" => isbn,
-      "AWSAccessKeyId" => access_key,
-      "AssociateTag" => associate_tag,
-      "Timestamp" => formatted_current_time
-    }
   end
 
   defp formatted_current_time do
