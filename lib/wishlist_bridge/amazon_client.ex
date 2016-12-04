@@ -17,7 +17,7 @@ defmodule WishlistBridge.AmazonClient do
   use HTTPoison.Base
   use Timex
 
-  @scheme      "https"
+  @scheme      "http"
   @host        "webservices.amazon.com"
   @path        "/onca/xml"
   @service     "AWSECommerceService"
@@ -27,45 +27,56 @@ defmodule WishlistBridge.AmazonClient do
     isbn
     |> params_for_isbn
     |> combine_params
-    |> percent_encode_query
     |> url_for
     |> signed_url_for
-    |> HTTPoison.get!
+    |> IO.puts
+    #|> HTTPoison.get!
   end
 
   defp signed_url_for(url) do
-    region = ""
+    url_parts = URI.parse(url)
 
-    AWSAuth.sign_url(access_key, secret_key, @http_method, url, region, @service, headers \\ Map.new)
+    hmac = :crypto.hmac(:sha256,
+                        secret_key,
+                        Enum.join(["GET", url_parts.host, url_parts.path, url_parts.query], "\n"))
+    signature = Base.encode64(hmac)
+
+    "#{url}&Signature=#{signature}"
   end
 
   defp url_for(query) do
-    "#{@scheme}://#{@host}#{@path}/#{@service}?#{query}"
+    "#{@scheme}://#{@host}#{@path}?#{query}"
   end
 
   defp params_for_isbn(isbn) do
     %{
-      "Service" => @service
+      "Service" => @service,
       "Operation" => "ItemLookup",
       "ResponseGroup" => "Large",
       "SearchIndex" => "All",
       "IdType" => "ISBN",
       "ItemId" => isbn,
       "AWSAccessKeyId" => access_key,
-      "AssociateTag" => associate_key
+      "AssociateTag" => associate_tag,
+      "Timestamp" => DateTime.utc_now |> DateTime.to_naive |> format_time
     }
   end
 
+  defp format_time(time) do
+    formatted_time = time
+    |> NaiveDateTime.to_iso8601
+  end
+
   defp access_key do
-    Application.get_env(:amazon_product_advertising_client)
+    Application.get_env(:wishlist_bridge, :aws_access_key_id)
   end
 
   defp secret_key do
-    Application.get_env(:aws_secret_access_key)
+    Application.get_env(:wishlist_bridge, :aws_secret_access_key)
   end
 
   defp associate_tag do
-    Application.get_env(:associate_tag)
+    Application.get_env(:wishlist_bridge, :associate_tag)
   end
 
   defp combine_params(params) do
