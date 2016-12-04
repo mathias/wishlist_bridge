@@ -1,6 +1,6 @@
-# GoodreadsAmazonWishlistBridge
+# Wishlist Bridge
 
-**TODO: Add description**
+This is a work-in-progress. Not ready for (re)use yet!
 
 ## Installation
 
