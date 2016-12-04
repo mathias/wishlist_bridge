@@ -62,12 +62,13 @@ defmodule WishlistBridge.AmazonClient do
       "ItemId" => isbn,
       "AWSAccessKeyId" => access_key,
       "AssociateTag" => associate_tag,
-      "Timestamp" => DateTime.utc_now |> DateTime.to_naive |> format_time
+      "Timestamp" => formatted_current_time
     }
   end
 
-  defp format_time(time) do
-    formatted_time = time
+  defp formatted_current_time do
+    DateTime.utc_now
+    |> DateTime.to_naive
     |> NaiveDateTime.to_iso8601
   end
 
