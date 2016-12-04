@@ -1,0 +1,2 @@
+defmodule WishlistBridge do
+end

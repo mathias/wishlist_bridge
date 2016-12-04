@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure for your application as:
 #
-#     config :goodreads_amazon_wishlist_bridge, key: :value
+#     config :wishlist_bridge, key: :value
 #
 # And access this configuration in your application as:
 #
-#     Application.get_env(:goodreads_amazon_wishlist_bridge, :key)
+#     Application.get_env(:wishlist_bridge, :key)
 #
 # Or configure a 3rd-party app:
 #
@@ -27,4 +27,9 @@ use Mix.Config
 # Configuration from the imported file will override the ones defined
 # here (which is why it is important to import them last).
 #
-#     import_config "#{Mix.env}.exs"
+     import_config "#{Mix.env}.exs"
+     # dev.exs should have this form:
+     # config :wishlist_bridge,
+     #   associate_tag: "YourAssociateTag",
+     #   aws_access_key_id: "YourAccessKeyID",
+     #   aws_secret_access_key: "YourSecretAccessKey"

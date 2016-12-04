@@ -1,2 +1,0 @@
-defmodule GoodreadsAmazonWishlistBridge do
-end
