@@ -15,7 +15,6 @@ defmodule WishlistBridge.AmazonClient do
   and request them
   """
   use HTTPoison.Base
-  use Timex
 
   @scheme      "http"
   @host        "webservices.amazon.com"
@@ -98,8 +97,7 @@ defmodule WishlistBridge.AmazonClient do
 
   defp formatted_current_time do
     DateTime.utc_now
-    |> DateTime.to_naive
-    |> NaiveDateTime.to_iso8601
+    |> DateTime.to_iso8601
   end
 
   defp access_key do
